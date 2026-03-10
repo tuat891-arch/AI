@@ -2,27 +2,28 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# 1. Cấu hình thẳng từ Secrets
+# 1. Cấu hình nhanh
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 st.set_page_config(page_title="Smart Meal Planner", page_icon="🥗")
 st.title("🥗 Smart Meal Planner")
-st.write("Dự án hỗ trợ sinh viên lên thực đơn tiết kiệm")
 
-file = st.file_uploader("Tải ảnh hóa đơn...", type=["jpg", "png", "jpeg"])
+uploaded_file = st.file_uploader("Tải ảnh hóa đơn...", type=["jpg", "jpeg", "png"])
 
-if file:
-    img = Image.open(file)
-    st.image(img, caption='Ảnh đã tải', use_container_width=True)
+if uploaded_file:
+    image = Image.open(uploaded_file)
+    st.image(image, caption='Ảnh đã tải lên', use_container_width=True)
     
-    if st.button("🚀 Gợi ý món ăn ngay"):
-        with st.spinner('Đang tính toán...'):
+    if st.button("🚀 Phân tích ngay"):
+        with st.spinner('AI đang tính toán...'):
             try:
-                # Câu lệnh siêu ngắn để AI phản hồi nhanh
-                prompt = "Liệt kê thực phẩm và gợi ý 3 món ăn sinh viên tiết kiệm. Trả lời ngắn gọn bằng tiếng Việt."
-                response = model.generate_content([prompt, img])
-                st.markdown(response.text)
+                # Prompt cực ngắn để AI phản hồi nhanh nhất có thể
+                prompt = "Đọc thực phẩm từ ảnh này và gợi ý 3 bữa ăn tiết kiệm cho sinh viên. Trả lời ngắn bằng tiếng Việt."
+                response = model.generate_content([prompt, image])
+                st.success("Xong rồi!")
+                st.write(response.text)
             except Exception as e:
                 st.error(f"Lỗi: {e}")
+
 
