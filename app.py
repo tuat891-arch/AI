@@ -26,16 +26,12 @@ if uploaded_file is not None:
         with st.spinner('AI đang suy nghĩ...'):
             try:
                 # Gửi ảnh và câu lệnh cho Gemini
-                prompt = """
-                Hãy đọc hóa đơn này và thực hiện:
-                1. Liệt kê các thực phẩm đã mua kèm giá tiền (nếu có).
-                2. Gợi ý 3 món ăn ngon, tiết kiệm dành cho sinh viên từ các nguyên liệu này.
-                3. Viết hướng dẫn nấu ăn ngắn gọn cho từng món.
-                Trả lời bằng tiếng Việt.
-                """
+            # Thay đoạn prompt cũ bằng đoạn ngắn gọn này:
+prompt = "Liệt kê thực phẩm trong ảnh và gợi ý 3 món ăn sinh viên tiết kiệm. Trả lời ngắn gọn bằng tiếng Việt."
                 response = model.generate_content([prompt, image])
                 
                 st.success("Xong rồi!")
                 st.markdown(response.text)
             except Exception as e:
+
                 st.error(f"Có lỗi xảy ra: {e}")
