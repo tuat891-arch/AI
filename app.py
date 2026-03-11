@@ -2,28 +2,47 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# 1. Cấu hình nhanh
+# Kiểm tra API key
+if "GEMINI_API_KEY" not in st.secrets:
+    st.error("Thiếu GEMINI_API_KEY")
+    st.stop()
+
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-model = genai.GenerativeModel('gemini-1.5-flash')
+
+model = genai.GenerativeModel(
+    "gemini-1.5-flash",
+    generation_config={
+        "temperature": 0.4,
+        "max_output_tokens": 300
+    }
+)
 
 st.set_page_config(page_title="Smart Meal Planner", page_icon="🥗")
 st.title("🥗 Smart Meal Planner")
 
-uploaded_file = st.file_uploader("Tải ảnh hóa đơn...", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Tải ảnh hóa đơn / thực phẩm", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Ảnh đã tải lên', use_container_width=True)
-    
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Ảnh đã tải lên", use_container_width=True)
+
     if st.button("🚀 Phân tích ngay"):
-        with st.spinner('AI đang tính toán...'):
+        with st.spinner("AI đang phân tích..."):
             try:
-                # Prompt cực ngắn để AI phản hồi nhanh nhất có thể
-                prompt = "Đọc thực phẩm từ ảnh này và gợi ý 3 bữa ăn tiết kiệm cho sinh viên. Trả lời ngắn bằng tiếng Việt."
+                prompt = """
+                Nhìn vào ảnh thực phẩm này.
+                1. Liệt kê thực phẩm có trong ảnh
+                2. Gợi ý 3 bữa ăn tiết kiệm cho sinh viên
+                Trả lời ngắn gọn bằng tiếng Việt.
+                """
+
                 response = model.generate_content([prompt, image])
-                st.success("Xong rồi!")
+
+                st.success("Xong!")
                 st.write(response.text)
+
             except Exception as e:
                 st.error(f"Lỗi: {e}")
+
 
 
