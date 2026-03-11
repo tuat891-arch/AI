@@ -2,13 +2,15 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
+# lấy API key từ secrets
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
+# dùng model đúng
 model = genai.GenerativeModel("gemini-1.5-flash-latest")
 
-st.title("Phân tích hóa đơn")
+st.title("AI đọc hóa đơn")
 
-uploaded_file = st.file_uploader("Tải ảnh hóa đơn", type=["png","jpg","jpeg"])
+uploaded_file = st.file_uploader("Tải ảnh hóa đơn", type=["jpg","png","jpeg"])
 
 if uploaded_file:
     image = Image.open(uploaded_file)
@@ -16,9 +18,11 @@ if uploaded_file:
 
     if st.button("Phân tích"):
         response = model.generate_content(
-            ["Trích xuất thông tin hóa đơn", image]
+            ["Trích xuất thông tin hóa đơn gồm: Tên hàng, SL, Đơn giá, Thành tiền", image]
         )
+
         st.write(response.text)
+
 
 
 
