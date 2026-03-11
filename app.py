@@ -2,11 +2,9 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# lấy API key từ secrets
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
-# dùng model đúng
-model = genai.GenerativeModel("gemini-1.5-flash-latest")
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 st.title("AI đọc hóa đơn")
 
